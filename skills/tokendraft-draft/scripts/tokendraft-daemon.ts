@@ -14,7 +14,7 @@ function parseArgs(argv: string[]): { websocketUrl: string; userId: string } {
 
   if (!websocketUrl || !userId) {
     console.error(
-      "Usage: bun run tokendraft-daemon.ts --websocketUrl <url> --userId <id>"
+      "Usage: bun run tokendraft-daemon.ts --websocketUrl <url> --userId <id>",
     );
     process.exit(1);
   }
@@ -23,15 +23,22 @@ function parseArgs(argv: string[]): { websocketUrl: string; userId: string } {
 }
 
 const args = parseArgs(process.argv.slice(2));
+const PING_INTERVAL_MS = 20_000;
 
 function connect() {
   const url = `${args.websocketUrl}?userId=${args.userId}`;
   console.log(`Connecting to ${url}...`);
 
   const ws = new WebSocket(url);
+  let pingTimer: ReturnType<typeof setInterval> | null = null;
 
   ws.onopen = () => {
     console.log("Connected to draft manager");
+    pingTimer = setInterval(() => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send("ping");
+      }
+    }, PING_INTERVAL_MS);
   };
 
   ws.onmessage = (event) => {
@@ -48,12 +55,13 @@ function connect() {
           "It's your turn! Tell the user it's your turn",
         ]);
       }
-    } catch (e) {
-      console.error("Failed to parse message:", e);
+    } catch {
+      // Non-JSON message (e.g. pong) — ignore
     }
   };
 
   ws.onclose = () => {
+    if (pingTimer) clearInterval(pingTimer);
     console.log("Connection closed. Reconnecting in 3s...");
     setTimeout(connect, 3000);
   };
