@@ -28,6 +28,8 @@ Built-in strategies (set as `autoDraftStrategy` to use instead of manual ranks):
 
 `VOL_24H_DESC`, `VOL_24H_ASC`, `MKT_CAP_ASC`, `MKT_CAP_DESC`, `ADP`, `PERCENT_24H_ASC`, `PERCENT_24H_DESC`
 
+
+
 ## Step 4: Submit Rankings
 
 ```bash
@@ -36,11 +38,11 @@ curl -X PUT "https://tokendraft-production.up.railway.app/api/v2/assetPriorityRa
   -H "Content-Type: application/json" \
   -d '{
     "assets": [{"assetId": "<ID>", "rank": 1}, ...],
-    "autoDraftStrategy": null
+    "autoDraftStrategy": "PERCENT_24H_DESC"
   }'
 ```
 
-Include every asset. Set `rank` to unique integers. Set `autoDraftStrategy` to a built-in strategy or `null` for custom.
+Include only the top 7 assets. Set `rank` to unique integers. `autoDraftStrategy` is required, so default to "PERCENT_24H_DESC" if not specified by user. This is the fallback if any assets are unavailable from rankings.
 
 ## Auto-Update Rankings (Cron)
 

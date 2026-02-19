@@ -1,6 +1,7 @@
-function parseArgs(argv: string[]): { websocketUrl: string; userId: string } {
+function parseArgs(argv: string[]): { websocketUrl: string; userId: string; to: string } {
   let websocketUrl = "";
   let userId = "";
+  let to = "";
 
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === "--websocketUrl" && argv[i + 1]) {
@@ -9,17 +10,20 @@ function parseArgs(argv: string[]): { websocketUrl: string; userId: string } {
     } else if (argv[i] === "--userId" && argv[i + 1]) {
       userId = argv[i + 1];
       i++;
+    } else if (argv[i] === "--to" && argv[i + 1]) {
+      to = argv[i + 1];
+      i++;
     }
   }
 
-  if (!websocketUrl || !userId) {
+  if (!websocketUrl || !userId || !to) {
     console.error(
-      "Usage: bun run tokendraft-daemon.ts --websocketUrl <url> --userId <id>",
+      "Usage: bun run tokendraft-daemon.ts --websocketUrl <url> --userId <id> --to <chatId>"
     );
     process.exit(1);
   }
 
-  return { websocketUrl, userId };
+  return { websocketUrl, userId, to };
 }
 
 const args = parseArgs(process.argv.slice(2));
@@ -33,7 +37,7 @@ function connect() {
   let pingTimer: ReturnType<typeof setInterval> | null = null;
 
   ws.onopen = () => {
-    console.log("Connected to draft manager");
+    console.log("Connected to TokenDraft API");
     pingTimer = setInterval(() => {
       if (ws.readyState === WebSocket.OPEN) {
         ws.send("ping");
@@ -51,6 +55,8 @@ function connect() {
         Bun.spawn([
           "openclaw",
           "agent",
+          "--to",
+          args.to,
           "--message",
           "It's your turn! Tell the user it's your turn",
         ]);
