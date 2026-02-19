@@ -45,6 +45,8 @@ curl -X POST "https://tokendraft-production.up.railway.app/api/v2/tournaments/jo
 
 HTTP 200 = registered. Relay any error to the user.
 
+Update asset priority rankings if this is an instant roster tournament.
+
 ## Join Paid Tournament (Buy-In)
 
 For `buyInAmountSol > 0`, verify SOL balance covers the buy-in + fees first.
@@ -76,6 +78,8 @@ curl -X POST "https://tokendraft-production.up.railway.app/api/v2/buyIn/sendSign
 ```
 
 HTTP 200 = registered. Relay errors (tournament full, already registered, on-chain failure).
+
+Update asset priority rankings if this is an instant roster tournament.
 
 ## Instant Roster Tournaments
 
@@ -113,6 +117,8 @@ Pick top N for each slot:
   rank 5: utils[0]     (Utility slot)
   rank 6: nfts[0]      (NFT slot)
   rank 7: best remaining asset of any type (Flex slot)
+
+Anything set to rank 1 will be selected as "captain", and be worth double points, so set rank 1 as best overall pick within roster.
 
 PUT /api/v2/assetPriorityRankings with:
   { "assets": [{"assetId":"<chains[0].id>","rank":1}, ...], "autoDraftStrategy": "MKT_CAP_DESC" }
