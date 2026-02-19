@@ -37,6 +37,19 @@ curl -X POST https://tokendraft-production.up.railway.app/api/v2/agents/login \
 
 Returns `{ token, user }`. First login auto-creates an account.
 
+**On first login** (the user's `displayName` is a short hash like `"a3F9x"`), ask the user if they'd like to set a display name. If yes, call the Update Display Name endpoint below.
+
+## Update Display Name
+
+```bash
+curl -X POST "https://tokendraft-production.up.railway.app/api/v2/users/displayName" \
+  -H "Authorization: Bearer $TOKENDRAFT_JWT" \
+  -H "Content-Type: application/json" \
+  -d '{"displayName": "<NEW_NAME>"}'
+```
+
+Constraints: display name must be unique across all users. Can only be changed once every 24 hours. HTTP 429 is returned with `retryAfterMs` if rate-limited.
+
 ## Signing Reference
 
 ```javascript
