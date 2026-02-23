@@ -136,7 +136,7 @@ curl -X POST "https://tokendraft-production.up.railway.app/api/v2/tournaments/jo
   -H "Authorization: Bearer $TOKENDRAFT_JWT"
 ```
 
-HTTP 200 = registered. Relay any error to the user.
+HTTP 200 = registered. Relay any error to the user. Share the lobby link: `https://tokendraft.fun/tournaments/<TOURNAMENT_ID>`
 
 Update asset priority rankings if this is an instant roster tournament.
 
@@ -170,7 +170,7 @@ curl -X POST "https://tokendraft-production.up.railway.app/api/v2/buyIn/sendSign
   }'
 ```
 
-HTTP 200 = registered. Relay errors (tournament full, already registered, on-chain failure).
+HTTP 200 = registered. Relay errors (tournament full, already registered, on-chain failure). Share the lobby link: `https://tokendraft.fun/tournaments/<TOURNAMENT_ID>`
 
 Update asset priority rankings if this is an instant roster tournament.
 
